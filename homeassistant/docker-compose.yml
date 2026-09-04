@@ -1,0 +1,35 @@
+services:
+  homeassistant:
+    image: ghcr.io/home-assistant/home-assistant:stable
+    container_name: homeassistant
+    restart: unless-stopped
+
+    network_mode: host
+
+    volumes:
+      - ./config:/config
+
+    environment:
+      - TZ=Europe/Amsterdam
+
+    privileged: true
+
+  whisper:
+    image: rhasspy/wyoming-whisper
+    container_name: whisper
+    command: --model small-int8 --language en
+    ports:
+      - "10300:10300"
+    volumes:
+      - ./whisper-data:/data
+    restart: unless-stopped
+
+  piper:
+    image: rhasspy/wyoming-piper
+    container_name: piper
+    command: --voice en_US-lessac-medium
+    ports:
+      - "10200:10200"
+    volumes:
+      - ./piper-data:/data
+    restart: unless-stopped

@@ -1,0 +1,142 @@
+# =========================
+# Secrets
+# =========================
+.env
+.env.*
+!.env.example
+
+# Private keys / certificates
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt
+
+# =========================
+# Local / runtime data
+# =========================
+
+# Ignore any data directory anywhere
+**/data/
+
+# Ignore any config/configs directory anywhere
+**/config/
+**/configs/
+
+# Application-specific runtime data
+**/whisper-data/
+**/piper-data/
+
+# Backups
+**/backups/
+
+# Immich local metadata
+.immich/
+
+# CVAT
+coding/cvat/
+
+# =========================
+# Logs
+# =========================
+*.log
+logs/
+log/
+**/logs/
+
+# =========================
+# Temporary files
+# =========================
+tmp/
+temp/
+**/tmp/
+**/temp/
+*.tmp
+*.swp
+*.swo
+
+# =========================
+# Python
+# =========================
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+env/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# =========================
+# Node / JavaScript
+# =========================
+node_modules/
+.npm/
+.yarn/
+.pnpm-store/
+dist/
+build/
+.cache/
+
+# =========================
+# IDEs
+# =========================
+.vscode/
+.idea/
+*.code-workspace
+
+# =========================
+# OS
+# =========================
+.DS_Store
+Thumbs.db
+
+# =========================
+# Docker
+# =========================
+docker-compose.override.yml
+docker.env
+docker-compose.env
+
+# =========================
+# Databases / local storage
+# =========================
+*.sqlite
+*.sqlite3
+*.db
+*.rdb
+immich/postgres/
+
+# =========================
+# Archives
+# =========================
+*.zip
+*.tar
+*.tar.gz
+*.7z
+*.rar
+*.sql.gz
+
+# =========================
+# Machine-generated
+# =========================
+*.pid
+*.pid.lock
+
+# =========================
+# Large binary files
+# =========================
+*.bin
+
+# =========================
+# Images
+# =========================
+*.png
+*.jpg
+*.jpeg
+*.webp
+
+# Metadata / generated application state
+**/metadata/
+**/.metadata/

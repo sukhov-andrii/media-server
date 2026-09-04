@@ -1,0 +1,3 @@
+ Library scan won't trigger generating the images. At least it didn't for me. (if that is what you are meaning by scan) Go to 'scheduled tasks' and run the 'Generate Trickplay Images' task under the 'Library' section of Scheduled Tasks. See if that works. Sorry in advance if that is what you were saying you have already tried.
+
+Keep HW decode and Acceleration under Trickplay setting enabled if you have things like quick sync available. Personally I ignored the only generate for key frames and stuck to per 10seconds setting. 

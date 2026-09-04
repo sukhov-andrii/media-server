@@ -1,0 +1,53 @@
+
+services:
+  syncthing:
+      image: lscr.io/linuxserver/syncthing:latest
+      container_name: syncthing
+      # hostname: syncthing #optional
+      environment:
+        - PUID=1000
+        - PGID=1000
+        - TZ=Etc/UTC
+      volumes:
+        - ./config:/config
+        - ./data:/data
+        # - /path/to/data2:/data2
+      ports:
+        - 8384:8384
+        - 22000:22000/tcp
+        - 22000:22000/udp
+        - 21027:21027/udp
+      restart: unless-stopped
+
+    
+  # kopia:
+  #     image: kopia/kopia:latest
+  #     # hostname: Hostname
+  #     container_name: Kopia
+  #     restart: unless-stopped
+  #     ports:
+  #         - 51515:51515
+  #     # Setup the server that provides the web gui
+  #     command:
+  #         - server
+  #         - start
+  #         - --disable-csrf-token-checks
+  #         - --insecure
+  #         - --address=0.0.0.0:51515
+  #         - --server-username=USERNAME
+  #         - --server-password=SECRET_PASSWORD
+  #     environment:
+  #         # Set repository password
+  #         KOPIA_PASSWORD: "SECRET"
+  #         USER: "User"
+  #     volumes:
+  #         # Mount local folders needed by kopia
+  #         - /path/to/config/dir:/app/config
+  #         - /path/to/cache/dir:/app/cache
+  #         - /path/to/logs/dir:/app/logs
+  #         # Mount local folders to snapshot
+  #         - /path/to/data/dir:/data:ro
+  #         # Mount repository location
+  #         - /path/to/repository/dir:/repository
+  #         # Mount path for browsing mounted snapshots
+  #         - /path/to/tmp/dir:/tmp:shared

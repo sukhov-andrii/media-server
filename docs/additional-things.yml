@@ -1,0 +1,193 @@
+  
+  # Data about network use
+  # :19999  
+  # netdata:
+  #   image: netdata/netdata:latest
+  #   container_name: netdata
+  #   restart: unless-stopped
+  #   pid: host                          # Required for accurate process monitoring
+  #   network_mode: host                 # Required for accurate network monitoring
+  #   cap_add:
+  #     - SYS_PTRACE
+  #     - SYS_ADMIN
+  #   security_opt:
+  #     - apparmor:unconfined
+  #   volumes:
+  #     - ./netdata/config:/etc/netdata
+  #     - ./netdata/lib:/var/lib/netdata
+  #     - ./netdata/cache:/var/cache/netdata
+  #     - /etc/passwd:/host/etc/passwd:ro
+  #     - /etc/group:/host/etc/group:ro
+  #     - /etc/localtime:/etc/localtime:ro
+  #     - /proc:/host/proc:ro
+  #     - /sys:/host/sys:ro
+  #     - /etc/os-release:/host/etc/os-release:ro
+  #     - /var/run/docker.sock:/var/run/docker.sock:ro   # Docker container metrics
+  #     - /var/log:/host/var/log:ro                       # Log monitoring
+  #   environment:
+  #     # - NETDATA_CLAIM_TOKEN=           # Optional: leave blank for local-only access
+  #     # - NETDATA_CLAIM_ROOMS=           # Optional: Netdata Cloud rooms
+  #     - TZ=${TIMEZONE}
+
+
+    # ---------------------------------------------------------------------------
+  # 8. HOMARR — family dashboard with live widgets for all services
+  #    UI: http://<server-ip>:7575
+  #    Generate SECRET_ENCRYPTION_KEY with: openssl rand -hex 32
+  # ---------------------------------------------------------------------------
+  # homarr:
+  #   image: ghcr.io/homarr-labs/homarr:latest
+  #   container_name: homarr
+  #   restart: unless-stopped
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock   # Docker integration (auto-discover containers)
+  #     - /home/user/docker/homarr/appdata:/appdata
+  #   environment:
+  #     - SECRET_ENCRYPTION_KEY=${HOMARR_SECRET_KEY}
+  #     - TZ=${TZ}
+  #   ports:
+  #     - "7575:7575"
+  #   networks:
+  #     - proxy
+
+
+
+  #  # ---------------------------------------------------------------------------
+  # # 1. NGINX PROXY MANAGER  — reverse proxy + automatic HTTPS via Let's Encrypt
+  # #    UI: http://<server-ip>:81   default login: admin@example.com / changeme
+  # # ---------------------------------------------------------------------------
+  # nginx-proxy-manager:
+  #   image: jc21/nginx-proxy-manager:latest
+  #   container_name: nginx-proxy-manager
+  #   restart: unless-stopped
+  #   ports:
+  #     - "80:80"       # HTTP  (redirect to HTTPS)
+  #     - "443:443"     # HTTPS (your services live here)
+  #     - "81:81"       # NPM admin UI
+  #   volumes:
+  #     - /home/user/docker/npm/data:/data
+  #     - /home/user/docker/npm/letsencrypt:/etc/letsencrypt
+  #     - /home/user/docker/npm/logs:/data/logs  # shared with Fail2ban
+  #   networks:
+  #     - proxy
+  #   healthcheck:
+  #     test: ["CMD", "/usr/bin/check-health"]
+  #     interval: 10s
+  #     timeout: 3s
+
+
+  # ---------------------------------------------------------------------------
+  # 7. UNPACKERR — extracts compressed downloads so Radarr/Sonarr can import
+  #    Config file: /home/user/docker/unpackerr/unpackerr.conf
+  # ---------------------------------------------------------------------------
+  # unpackerr:
+  #   image: golift/unpackerr:latest
+  #   container_name: unpackerr
+  #   restart: unless-stopped
+  #   user: "${PUID}:${PGID}"
+  #   volumes:
+  #     - /home/user/docker/unpackerr:/config
+  #     - ${DOWNLOAD_DIR}:/downloads          # Same path as your qBittorrent/NZB client
+  #   environment:
+  #     - TZ=${TZ}
+  #     - UN_DEBUG=false
+  #     - UN_LOG_FILE=/config/unpackerr.log
+  #     # Radarr integration (add more by incrementing index)
+  #     - UN_RADARR_0_URL=http://radarr:7878
+  #     - UN_RADARR_0_API_KEY=${RADARR_API_KEY}
+  #     - UN_RADARR_0_PATHS_0=/downloads
+  #     # Sonarr integration
+  #     - UN_SONARR_0_URL=http://sonarr:8989
+  #     - UN_SONARR_0_API_KEY=${SONARR_API_KEY}
+  #     - UN_SONARR_0_PATHS_0=/downloads
+  #   networks:
+  #     - proxy
+
+  # dozzle:
+  #   image: amir20/dozzle:latest
+  #   container_name: dozzle
+  #   restart: unless-stopped
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock:ro
+  #   ports:
+  #     - "9999:8080"
+  #   environment:
+  #     - DOZZLE_LEVEL=info     # Only show info and above (filters out noise)
+  #     - DOZZLE_TAILSIZE=300   # Lines of history to load on open
+
+  # jellystat:
+  #   image: cyfershepard/jellystat:latest
+  #   container_name: jellystat
+  #   environment:
+  #     POSTGRES_USER: jellystat
+  #     POSTGRES_PASSWORD: ${JELLYSTAT_DB_PASSWORD}
+  #     POSTGRES_IP: jellystat_db
+  #     POSTGRES_PORT: 5432
+  #     JWT_SECRET: ${JELLYSTAT_JWT_SECRET}
+  #     TZ: ${TIMEZONE}
+  #   ports:
+  #     - 3002:3000
+  #   depends_on:
+  #     - jellystat_db
+  #   restart: unless-stopped
+
+  # jellystat_db:
+  #   image: postgres:15.2
+  #   container_name: jellystat-db
+  #   environment:
+  #     POSTGRES_USER: jellystat
+  #     POSTGRES_PASSWORD: ${JELLYSTAT_DB_PASSWORD}
+  #   volumes:
+  #     - ./jellystat-db:/var/lib/postgresql/data
+  #   restart: unless-stopped
+
+
+  # suggestarr:
+  #   image: ciuse99/suggestarr:latest
+  #   container_name: SuggestArr
+  #   restart: always
+  #   ports:
+  #     - "${SUGGESTARR_PORT:-5000}:${SUGGESTARR_PORT:-5000}"
+  #   volumes:
+  #     - ./config_files:/app/config/config_files
+  #   environment:
+  #     # Optional: Only needed if something goes wrong and you need to inspect deeper
+  #     - LOG_LEVEL=${LOG_LEVEL:-info}
+  #     # Optional: Customize the port (defaults to 5000 if not set)
+  #     - SUGGESTARR_PORT=${SUGGESTARR_PORT:-5000}
+
+
+
+    # qbitrr:
+  #   image: feramance/qbitrr:latest
+  #   container_name: qbitrr
+  #   restart: unless-stopped
+  #   tty: true
+  #   environment:
+  #     TZ: ${TZ}
+  #   ports:
+  #     - "6969:6969"    # WebUI
+  #   volumes:
+  #     - /home/user/docker/qbitrr:/config
+  #     - ${DOWNLOAD_DIR}:/completed_downloads:rw
+  #     - /home/user/docker/radarr/config/radarr.db:/radarr.db:ro   # read-only DB access
+
+  # decluttarr:
+  #   image: ghcr.io/manimatter/decluttarr:latest
+  #   container_name: decluttarr
+  #   restart: unless-stopped
+  #   network_mode: "service:gluetun"
+  #   depends_on:
+  #     gluetun:
+  #       condition: service_healthy
+  #   environment:
+  #     - TZ=${TIMEZONE}
+  #     - LOG_LEVEL=INFO
+  #     - RADARR_URL=http://localhost:7878
+  #     - RADARR_KEY=${RADARR_API_KEY}
+  #     - SONARR_URL=http://localhost:8989
+  #     - SONARR_KEY=${SONARR_API_KEY}
+  #     - QBITTORRENT_URL=http://localhost:8701
+  #     - REMOVE_STALLED=true
+  #     - REMOVE_METADATA_MISSING=true
+  #     - REMOVE_ORPHANS=true

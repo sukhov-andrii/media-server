@@ -1,0 +1,6 @@
+- A reverse proxy — you have no Traefik or Nginx Proxy Manager. Right now you're accessing everything by IP and port. Fine for now but becomes annoying with many services, and essential if you ever want Tailscale with clean URLs.
+- Tailscale — no remote access currently. One container away from being able to use Jellyfin from anywhere.
+- Monitoring — nothing watching whether your services are up. Uptime Kuma is one container and will notify you via Telegram/email/etc when something goes down, including if Gluetun drops.
+- Recyclarr for automated quality profile management, 
+- Jellystat for watch statistics
+- Jellyfin plugins like Intro Skipper and Trakt are all worth adding eventually but none are urgent.
